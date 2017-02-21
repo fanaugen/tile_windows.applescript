@@ -1,24 +1,37 @@
 # Utility script that gathers info about the Dock and Desktop
 script OSX
-  prop dock_dimensions: 0
+  prop dock_pos: {}
+  prop dock_dim: {}
   prop dock_hidden: false
-  prop desktop_dimensions: {}
+  prop desktop_pos: {0, 0}
+  prop desktop_dim: {}
+  prop menubar_hidden: false
+  prop menubar_dim: {}
 
   on run()
     tell application "System Events"
-      set my dock_dimensions to (get size of first UI element of process "Dock")
+      set the_dock to the first UI element of process "Dock"
+      set my dock_pos to (get position of the_dock)
+      set my dock_dim to (get size of the_dock)
     end
 
     tell application "Finder"
-      set my desktop_dimensions to the bounds of desktop's window
+      set {_, _, w, h} to (bounds of the window of the desktop)
+      set my desktop_dim to {w, h}
+      set my menubar_dim to {w, 22}
     end
 
-    set my dock_hidden to ("1" = (do shell script "defaults read com.apple.dock autohide"))
+    set my dock_hidden to ("1" is equal to (do shell script "defaults read com.apple.dock autohide"))
+    set my menubar_hidden to ("1" is equal to (do shell script "defaults read NSGlobalDomain _HIHideMenuBar"))
   end
 end
 
-run OSX
-# OSX's desktop_dimensions
+tell OSX to run
+# return { the_desktop: {desktop_pos, desktop_dim} of OSX,¬
+#   the_dock: {dock_pos, dock_dim} of OSX,¬
+#   the_menubar: menubar_dim of OSX,¬
+#   menubar_is_hidden: menubar_hidden of OSX,¬
+#   dock_is_hidden: dock_hidden of OSX}
 
 script ListUtil
   # recursive flatten stolen from: http://macscripter.net/viewtopic.php?pid=140475#p140475
@@ -54,9 +67,9 @@ script ListUtil
 end
 
 tell application "System Events"
-  set visible_windows to ListUtil's flatten(¬
-    get every window of (every application process whose visible is true)¬
-  )
+  # set visible_windows to ListUtil's flatten(¬
+  #   get every window of (every application process whose visible is true)¬
+  # )
 end
 
 script Math
@@ -128,11 +141,14 @@ on rect({pos, dim})
 		end
 
     on includes(p) # a point
-      (my posx < p's posx and p's posx < tr's posx) and ¬
-      (my posy < p's posy and p's posy < br's posy)
+      Math's in_range(p's posx, my posx, tr's posx) and ¬
+      Math's in_range(p's posy, my posy, br's posy)
     end
 	end
 
 	return Rectangle
 end
 
+# set rect1 to rect({{0, 0}, {100, 100}})
+# set rect2 to rect({{90, 80}, {100, 100}})
+# rect1's overlaps(rect2)
