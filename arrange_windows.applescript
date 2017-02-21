@@ -7,15 +7,15 @@ script OSX
   on run()
     tell application "System Events"
       set my dock_dimensions to (get size of first UI element of process "Dock")
-    end tell
+    end
 
     tell application "Finder"
       set my desktop_dimensions to the bounds of desktop's window
-    end tell
+    end
 
     set my dock_hidden to ("1" = (do shell script "defaults read com.apple.dock autohide"))
   end
-end script
+end
 
 run OSX
 # OSX's desktop_dimensions
@@ -34,29 +34,30 @@ script ListUtil
             recursive_flatten(_value)
           else
             copy _value to the end of my ref_fl
-          end if
-        end repeat
-      end recursive_flatten
-    end script
+          end
+        end
+      end
+    end
 
     tell flattener
       recursive_flatten(nested_list)
       return its flat_list
-    end tell
-  end flatten
+    end
+  end
 
   on any(_list, criteria)
     repeat with i from 1 to (count _list)
       if (criteria's check(item i of _list)) then return true
-    end repeat
+    end
     false
   end
-end script
+end
 
- tell application "System Events"
-   set visible_windows to ListUtil's flatten(¬
-     get every window of (every application process whose visible is true))
- end
+tell application "System Events"
+  set visible_windows to ListUtil's flatten(¬
+    get every window of (every application process whose visible is true)¬
+  )
+end
 
 script Math
 	on abs(num)
@@ -68,7 +69,7 @@ script Math
 		set m to 0
 		repeat with X in _list
 			if X > m then set m to X
-		end repeat
+		end
 		return m as number
 	end
 
@@ -76,14 +77,14 @@ script Math
 		set m to item 1 of _list
 		repeat with Y in rest of _list
 			if Y < m then set m to Y
-		end repeat
+		end
 		return m as number
 	end
 
 	on sqrt(num)
 		num ^ 0.5
 	end
-end script
+end
 
 # wrapper for coordinate pair
 on coords({_x, _y})
@@ -99,7 +100,7 @@ on coords({_x, _y})
     to to_pair()
       {posx, posy}
     end
-	end script
+	end
 	return MyPoint
 end
 
@@ -122,7 +123,7 @@ on rect({pos, dim})
         to check(p)
           includes(p)
         end
-      end script
+      end
       ListUtil's any(other's corners, are_inside)
 		end
 
@@ -130,22 +131,8 @@ on rect({pos, dim})
       (my posx < p's posx and p's posx < tr's posx) and ¬
       (my posy < p's posy and p's posy < br's posy)
     end
-	end script
+	end
 
 	return Rectangle
-end rect
-
-set de to rect({{0,0}, {10,6}})
-set w1 to rect({{9,5}, {3,4}})
-set w2 to rect({{-4,2}, {2,2}})
-
-overlaps(w2) of de
-
-
-
-
-
-
-
-
+end
 
