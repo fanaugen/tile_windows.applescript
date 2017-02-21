@@ -78,6 +78,10 @@ script Math
 		num
 	end
 
+  on in_range(num, lower, upper)
+    lower < num and num < upper
+  end
+
 	on max(_list)
 		set m to 0
 		repeat with X in _list
@@ -149,6 +153,7 @@ on rect({pos, dim})
 	return Rectangle
 end
 
-# set rect1 to rect({{0, 0}, {100, 100}})
-# set rect2 to rect({{90, 80}, {100, 100}})
-# rect1's overlaps(rect2)
+ set rect1 to rect({{0, 0}, {100, 100}})
+ set rect2 to rect({{90, 80}, {100, 100}})
+ set rect3 to rect({{200, 200}, {10, 10}})
+ return {rect1's overlaps(rect2), rect1's overlaps(rect3)} # expect {true, false}
