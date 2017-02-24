@@ -3,6 +3,7 @@ script OSX
   prop dock_pos: {}
   prop dock_dim: {}
   prop dock_hidden: false
+  prop dock_orientation: "bottom"
   prop desktop_pos: {0, 0}
   prop desktop_dim: {}
   prop menubar_hidden: false
@@ -22,16 +23,21 @@ script OSX
     end
 
     set my dock_hidden to ("1" is equal to (do shell script "defaults read com.apple.dock autohide"))
+    set my dock_orientation to (do shell script "defaults read com.apple.dock orientation")
     set my menubar_hidden to ("1" is equal to (do shell script "defaults read NSGlobalDomain _HIHideMenuBar"))
   end
 end
-
 tell OSX to run
-# return { the_desktop: {desktop_pos, desktop_dim} of OSX,¬
-#   the_dock: {dock_pos, dock_dim} of OSX,¬
-#   the_menubar: menubar_dim of OSX,¬
-#   menubar_is_hidden: menubar_hidden of OSX,¬
-#   dock_is_hidden: dock_hidden of OSX}
+# return {¬
+#   desktop_pos: desktop_pos of OSX,¬
+#   desktop_dim: desktop_dim of OSX,¬
+#   dock_pos: dock_pos of OSX,¬
+#   dock_dim: dock_dim of OSX,¬
+#   dock_hidden: dock_hidden of OSX,¬
+#   dock_orientation: dock_orientation of OSX,¬
+#   menubar_dim: menubar_dim of OSX,¬
+#   menubar_hidden: menubar_hidden of OSX¬
+# }
 
 script ListUtil
   # recursive flatten stolen from: http://macscripter.net/viewtopic.php?pid=140475#p140475
@@ -79,7 +85,7 @@ script Math
 	end
 
   on in_range(num, lower, upper)
-    lower < num and num < upper
+    lower <= num and num <= upper
   end
 
 	on max(_list)
@@ -113,10 +119,6 @@ on coords({_x, _y})
 		on distance_to(other)
 			Math's sqrt((posx - (other's posx)) ^ 2 + (posy - (other's posy)) ^ 2)
 		end
-
-    to to_pair()
-      {posx, posy}
-    end
 	end
 	return MyPoint
 end
