@@ -130,20 +130,12 @@ on rect({pos, dim})
 		prop dimensions : dim
 		prop dimx : item 1 of dim
 		prop dimy : item 2 of dim
-    # corners
-		prop tl : coords({my posx        , my posy})
-    prop tr : coords({my posx + dimx , my posy})
-		prop bl : coords({my posx        , my posy + dimy})
-    prop br : coords({my posx + dimx , my posy + dimy})
-    prop corners: {tl, tr, bl, br}
+    prop maxx : my posx + dimx
+    prop maxy : my posy + dimy
 
-		on overlaps(other) # true if this rect overlaps with the other
-      script are_inside
-        to check(p)
-          includes(p)
-        end
-      end
-      ListUtil's any(other's corners, are_inside)
+		on overlaps(other)
+      Math's min({my maxx, other's maxx}) - Math's max({my posx, other's posx}) > 0 and ¬
+      Math's min({my maxy, other's maxy}) - Math's max({my posy, other's posy}) > 0
 		end
 
     on includes(p) # a point
@@ -156,6 +148,6 @@ on rect({pos, dim})
 end
 
  set rect1 to rect({{0, 0}, {100, 100}})
- set rect2 to rect({{90, 80}, {100, 100}})
- set rect3 to rect({{200, 200}, {10, 10}})
+ set rect2 to rect({{-20, 80}, {140, 20}})
+ set rect3 to rect({{100, 0}, {10, 10}})
  return {rect1's overlaps(rect2), rect1's overlaps(rect3)} # expect {true, false}
