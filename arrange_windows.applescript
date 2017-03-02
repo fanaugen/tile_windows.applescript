@@ -9,6 +9,15 @@ script OSX
   prop menubar_hidden: false
   prop menubar_dim: {}
 
+  to read_setting(domain, key, default)
+    try
+      set value to (do shell script ("defaults read " & domain & " " & key))
+    on error
+      set value to default
+    end
+    return value
+  end
+
   on run()
     tell application "System Events"
       set the_dock to the first UI element of process "Dock"
@@ -22,9 +31,9 @@ script OSX
       set my menubar_dim to {w, 22}
     end
 
-    set my dock_hidden to ("1" is equal to (do shell script "defaults read com.apple.dock autohide"))
-    set my dock_orientation to (do shell script "defaults read com.apple.dock orientation")
-    set my menubar_hidden to ("1" is equal to (do shell script "defaults read NSGlobalDomain _HIHideMenuBar"))
+    set my dock_hidden to ("1" is equal to (read_setting("com.apple.dock", "autohide", "0")))
+    set my dock_orientation to read_setting("com.apple.dock", "orientation", "bottom")
+    set my menubar_hidden to ("1" is equal to read_setting("NSGlobalDomain", "_HIHideMenuBar", "0"))
   end
 end
 tell OSX to run
