@@ -35,8 +35,23 @@ script OSX
     set my dock_orientation to read_setting("com.apple.dock", "orientation", "bottom")
     set my menubar_hidden to ("1" is equal to read_setting("NSGlobalDomain", "_HIHideMenuBar", "0"))
   end
+
+  on getAvailableSurface() # rectangle that can be filled with windows
+    run me # to set all the properties
+    set surface to rect({desktop_pos, desktop_dim})
+    if not menubar_hidden
+      set menubar_height to (second item of menubar_dim) as number
+      set surface to surface's reduce by menubar_height from "top"
+    end
+
+    if (not dock_hidden) and (surface's overlaps(rect(dock_pos, dock_dim)))
+      set surface to surface's reduce by (Math's min(dock_dim)) from dock_orientation
+    end
+
+    return surface
+  end
 end
-tell OSX to run
+
 # return {¬
 #   desktop_pos: desktop_pos of OSX,¬
 #   desktop_dim: desktop_dim of OSX,¬
@@ -121,7 +136,6 @@ end
 # wrapper for coordinate pair
 on coords({_x, _y})
 	script MyPoint
-    prop parent: {_x, _y}
 		prop posx : _x
 		prop posy : _y
 
@@ -151,12 +165,28 @@ on rect({pos, dim})
       Math's in_range(p's posx, my posx, tr's posx) and ¬
       Math's in_range(p's posy, my posy, br's posy)
     end
+
+    to reduce by pixels from direction
+      if direction = "top"
+        rect({{my posx, my posy + pixels}, {dimx, dimy - pixels}})
+      else if direction = "bottom"
+        rect({{my posx, my posy}, {dimx, dimy - pixels}})
+      else if direction = "left"
+        rect({{my posx + pixels, my posy}, {dimx - pixels, dimy}})
+      else if direction = "right"
+        rect({{my posx, my posy}, {dimx - pixels, dimy}})
+      end
+    end
 	end
 
 	return Rectangle
 end
 
- set rect1 to rect({{0, 0}, {100, 100}})
- set rect2 to rect({{-20, 80}, {140, 20}})
- set rect3 to rect({{100, 0}, {10, 10}})
- return {rect1's overlaps(rect2), rect1's overlaps(rect3)} # expect {true, false}
+set rect1 to rect({{0, 0}, {100, 100}})
+set rect2 to rect({{-20, 80}, {140, 20}})
+set rect3 to rect({{100, 0}, {10, 10}})
+# return {rect1's overlaps(rect2), rect1's overlaps(rect3)} # expect {true, false}
+
+set available_surface to OSX's getAvailableSurface()
+{posx, posy, dimx, dimy} of available_surface
+
