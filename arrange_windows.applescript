@@ -1,3 +1,7 @@
+use scripting additions
+use ListUtil : script "ListUtil"
+use Math : script "Math"
+
 # Utility script that gathers info about the Dock and Desktop
 script OSX
   prop dock_pos: {}
@@ -63,74 +67,10 @@ end
 #   menubar_hidden: menubar_hidden of OSX¬
 # }
 
-script ListUtil
-  # recursive flatten stolen from: http://macscripter.net/viewtopic.php?pid=140475#p140475
-  on flatten(nested_list)
-    script flattener
-      property flat_list : {}
-      property ref_fl : reference to my flat_list
-
-      on recursive_flatten(_list)
-        repeat with i from 1 to (count _list)
-          set _value to item i of _list
-          if (_value's class is list) then
-            recursive_flatten(_value)
-          else
-            copy _value to the end of my ref_fl
-          end
-        end
-      end
-    end
-
-    tell flattener
-      recursive_flatten(nested_list)
-      return its flat_list
-    end
-  end
-
-  on any(_list, criteria)
-    repeat with i from 1 to (count _list)
-      if (criteria's check(item i of _list)) then return true
-    end
-    false
-  end
-end
-
 tell application "System Events"
   # set visible_windows to ListUtil's flatten(¬
   #   get every window of (every application process whose visible is true)¬
   # )
-end
-
-script Math
-	on abs(num)
-		if num < 0 then return 0 - num
-		num
-	end
-
-  on in_range(num, lower, upper)
-    lower <= num and num <= upper
-  end
-
-	on max(_list)
-		set m to 0
-		repeat with X in _list
-			if X > m then set m to X
-		end
-		return m as number
-	end
-
-	on min(_list)
-		set m to item 1 of _list
-		repeat with Y in rest of _list
-			if Y < m then set m to Y
-		end
-		return m as number
-	end
-
-	on sqrt(num)
-		num ^ 0.5
-	end
 end
 
 # wrapper for coordinate pair
