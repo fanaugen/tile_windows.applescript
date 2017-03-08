@@ -1,6 +1,6 @@
 use scripting additions
-use ListUtil : script "ListUtil"
-use Math : script "Math"
+use ListUtil : script "org.fanaugen.arrange_windows/ListUtil"
+use Math : script "org.fanaugen.arrange_windows/Math"
 
 # Utility script that gathers info about the Dock and Desktop
 script OSX

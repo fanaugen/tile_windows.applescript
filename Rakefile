@@ -1,18 +1,15 @@
-# source files exist in the top-level directory, as well as under lib
-# steps needed to compile a bundled AppleScript with all the libraries bundled into it:
-#
-# 1. Compile all dependencies in lib/
-# 2. Symlink them into ~/Library/Script\ Libraries/ so osascript can pick them up
-# 3. Compile the main script, which uses `use script` statements
-#
-# To bundle:
-# 4. Compile the main script as a bundle
-# 5. move or copy the compiled depencencies into the bundle’s Contents/Resources/Script Libraries/
 require "rake/clean"
 
-CLEAN.concat ["compiled"]
+NAMESPACE = "org.fanaugen.arrange_windows".freeze
+
+def lib_path
+  File.join(Dir.home, "Library", "Script Libraries", NAMESPACE)
+end
+
+CLEAN.concat ["compiled", lib_path]
 
 directory "compiled/lib"
+directory lib_path
 
 task :default => :build
 
@@ -31,9 +28,9 @@ task :build_libraries => ["compiled/lib"] do
   end
 end
 
-task :link_libraries => ["compiled/lib"] do
 desc "Symlinks compiled libraries to ~/Library/Script Libraries"
+task :link_libraries => ["compiled/lib", lib_path] do
   if Dir.glob("compiled/lib/*").any?
-    sh "ln -sf #{File.join(Dir.pwd, "compiled/lib/*.scpt")} ~/Library/Script\\ Libraries"
+    sh "ln -sf #{File.join(Dir.pwd, "compiled/lib/*.scpt")} '#{lib_path}'"
   end
 end
