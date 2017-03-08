@@ -48,7 +48,7 @@ script OSX
       set surface to surface's reduce by menubar_height from "top"
     end
 
-    if (not dock_hidden) and (surface's overlaps(rect(dock_pos, dock_dim)))
+    if (not dock_hidden) and (surface's overlaps(rect({dock_pos, dock_dim}))) then
       set surface to surface's reduce by (Math's min(dock_dim)) from dock_orientation
     end
 
