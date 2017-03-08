@@ -1,6 +1,6 @@
 use scripting additions
-use ListUtil : script "org.fanaugen.arrange_windows/ListUtil"
-use Math : script "org.fanaugen.arrange_windows/Math"
+use ListUtil: script "org.fanaugen.arrange_windows/ListUtil"
+use Math    : script "org.fanaugen.arrange_windows/Math"
 
 # Utility script that gathers info about the Dock and Desktop
 script OSX
@@ -75,31 +75,31 @@ end
 
 # wrapper for coordinate pair
 on coords({_x, _y})
-	script MyPoint
-		prop posx : _x
-		prop posy : _y
+  script MyPoint
+    prop posx : _x
+    prop posy : _y
 
-		on distance_to(other)
-			Math's sqrt((posx - (other's posx)) ^ 2 + (posy - (other's posy)) ^ 2)
-		end
-	end
-	return MyPoint
+    on distance_to(other)
+      Math's sqrt((posx - (other's posx)) ^ 2 + (posy - (other's posy)) ^ 2)
+    end
+  end
+  return MyPoint
 end
 
 # pos: coords of upper left corner; dim: {width, height}
 on rect({pos, dim})
-	script Rectangle
+  script Rectangle
     prop parent: coords(pos)
-		prop dimensions : dim
-		prop dimx : item 1 of dim
-		prop dimy : item 2 of dim
+    prop dimensions : dim
+    prop dimx : item 1 of dim
+    prop dimy : item 2 of dim
     prop maxx : my posx + dimx
     prop maxy : my posy + dimy
 
-		on overlaps(other)
+    on overlaps(other)
       Math's min({my maxx, other's maxx}) - Math's max({my posx, other's posx}) > 0 and ¬
       Math's min({my maxy, other's maxy}) - Math's max({my posy, other's posy}) > 0
-		end
+    end
 
     on includes(p) # a point
       Math's in_range(p's posx, my posx, tr's posx) and ¬
@@ -117,9 +117,9 @@ on rect({pos, dim})
         rect({{my posx, my posy}, {dimx - pixels, dimy}})
       end
     end
-	end
+  end
 
-	return Rectangle
+  return Rectangle
 end
 
 set rect1 to rect({{0, 0}, {100, 100}})
