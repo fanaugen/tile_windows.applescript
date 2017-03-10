@@ -1,36 +1,50 @@
+require "tmpdir"
 require "rake/clean"
 
-NAMESPACE = "org.fanaugen.arrange_windows".freeze
+NAMESPACE      = "org.fanaugen.arrange_windows".freeze
+AS_LIB_PATH    = File.join(Dir.home, "Library", "Script Libraries")
+LIB_PATH       = File.join(AS_LIB_PATH, NAMESPACE)
+TEST_FRAMEWORK = File.join(AS_LIB_PATH, "com.lifepillar", "ASUnit.scptd")
 
-def lib_path
-  File.join(Dir.home, "Library", "Script Libraries", NAMESPACE)
-end
+CLEAN.include "*.scpt", "lib/*.scpt", LIB_PATH
 
-CLEAN.concat ["compiled", lib_path]
-
-directory "compiled/lib"
-directory lib_path
+directory LIB_PATH
+directory File.dirname(TEST_FRAMEWORK)
 
 task :default => :build
 
 desc "Compiles applescripts in ./lib and in the project root"
-task :build => [:build_libraries, :link_libraries] do
+task :build => :build_libraries do
   FileList["*.applescript"].each do |source|
-    sh "osacompile -o compiled/#{File.basename(source, ".*")}.scpt #{source}"
+    sh "osacompile -o #{File.basename(source, ".*")}.scpt #{source}"
   end
 end
 
-desc "Compiles all the applescripts in ./lib"
-task :build_libraries => ["compiled/lib"] do
+desc "Compiles scripts in ./lib, symlinks them to ~/Library/Script Libraries"
+task :build_libraries => LIB_PATH do
   FileList["lib/*.applescript"].each do |library|
-    target = File.join("compiled/lib", "#{File.basename(library, ".*")}.scpt")
-    sh "osacompile -o #{target} #{library}"
+    sh "osacompile -o lib/#{File.basename(library, ".*")}.scpt #{library}"
   end
+  ln_sf Dir.glob(File.join(Dir.pwd, "lib/*.scpt")), LIB_PATH
 end
 
-desc "Symlinks compiled libraries to ~/Library/Script Libraries"
-task :link_libraries => ["compiled/lib", lib_path] do
-  if Dir.glob("compiled/lib/*").any?
-    sh "ln -sf #{File.join(Dir.pwd, "compiled/lib/*.scpt")} '#{lib_path}'"
+desc "Runs the test suite"
+task :test => [:build_libraries, TEST_FRAMEWORK] do
+  puts "WE SHALL TEST"
+end
+
+desc "Installs the testing framework ASUnit"
+file TEST_FRAMEWORK => File.dirname(TEST_FRAMEWORK) do
+  working_directory = Dir.getwd
+  Dir.mktmpdir do |tmp|
+    begin
+      cd tmp
+      sh "git clone --depth=1 git@github.com:lifepillar/ASUnit.git"
+      cd "ASUnit"
+      sh "osacompile -o ASUnit.scptd ASUnit.applescript"
+      mv "ASUnit.scptd", TEST_FRAMEWORK
+    ensure
+      cd working_directory
+    end
   end
 end
