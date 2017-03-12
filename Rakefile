@@ -34,10 +34,15 @@ task :compile, [:source_file] do |t, args|
   sh "osacompile -o '#{args.source_file.ext("scpt")}' '#{args.source_file}'"
 end
 
-desc "Runs the test suite"
-task :test => [TEST_FRAMEWORK] do
+desc "Runs the entire test suite by running the test loader"
+task :test => TEST_FRAMEWORK do |t, args|
+  if args.extras.any?
+    test_file = args.extras.first.ext("scpt")
+  else
+    test_file = "test/Test Loader.scpt"
+  end
   verbose(false)
-  sh "osascript \"test/Test Loader.scpt\""
+  sh "osascript \"#{test_file}\""
 end
 
 desc "Installs the testing framework ASUnit"
