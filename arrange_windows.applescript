@@ -56,17 +56,6 @@ script OSX
   end
 end
 
-# return {¬
-#   desktop_pos: desktop_pos of OSX,¬
-#   desktop_dim: desktop_dim of OSX,¬
-#   dock_pos: dock_pos of OSX,¬
-#   dock_dim: dock_dim of OSX,¬
-#   dock_hidden: dock_hidden of OSX,¬
-#   dock_orientation: dock_orientation of OSX,¬
-#   menubar_dim: menubar_dim of OSX,¬
-#   menubar_hidden: menubar_hidden of OSX¬
-# }
-
 tell application "System Events"
   # set visible_windows to ListUtil's flatten(¬
   #   get every window of (every application process whose visible is true)¬
