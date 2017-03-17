@@ -26,3 +26,16 @@ end
 on sqrt(num)
   num ^ 0.5
 end
+
+(* returns a list of two integers, {cols, rows}, such as:
+ * - cols >= rows (because width of display is assumed larger than height)
+ * - cols * rows >= num (because all windows need to fit on the grid)
+*)
+on factors(num)
+  set factor to (my sqrt(num)) as integer
+  if factor * factor is less than num then
+    {factor + 1, factor}
+  else
+    {factor, factor}
+  end
+end

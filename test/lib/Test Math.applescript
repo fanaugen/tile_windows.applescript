@@ -46,4 +46,26 @@ script |Test Math|
       assertEqual(12.0, Math's sqrt(144))
       assertEqual(5.0, Math's sqrt(25))
     end
+
+    script |factors of a square|
+      prop parent : UnitTest(me)
+      assertEqual({2, 2}, Math's factors(4))
+      assertEqual({3, 3}, Math's factors(9))
+      assertEqual({12, 12}, Math's factors(144))
+    end
+
+    script |product of factors greater than or equal to number|
+      prop parent : UnitTest(me)
+      set factors to Math's factors(51)
+      set product to (first item of factors) * (second item of factors)
+      assert((product is greater than or equal to 51),¬
+        "product of factors must be at least equal to number")
+    end
+
+    script |factors are both integers|
+      prop parent : UnitTest(me)
+      set factors to Math's factors(51)
+      assertInstanceOf(integer, item 1 of factors)
+      assertInstanceOf(integer, item 2 of factors)
+    end
 end
