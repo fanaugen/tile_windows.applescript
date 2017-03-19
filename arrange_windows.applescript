@@ -111,10 +111,30 @@ on rect({pos, dim})
   return Rectangle
 end
 
-set rect1 to rect({{0, 0}, {100, 100}})
-set rect2 to rect({{-20, 80}, {140, 20}})
-set rect3 to rect({{100, 0}, {10, 10}})
-# return {rect1's overlaps(rect2), rect1's overlaps(rect3)} # expect {true, false}
+script SlotCalculator
+  (*
+  given a Rectangle and a number, this method returns a list of Rectangle objects
+  (organised in columns first, then rows) such that
+  - the size of the list equals num_windows
+  - the rectangles don't overlap, but together cover the total area
+  - most rectangles are equal in size and aspect ratio
+  *)
+  on divideArea(area, num_windows)
+  end
+
+  (* returns a list of two integers, {cols, rows}, such as:
+     - cols >= rows (because width of display is assumed larger than height)
+     - cols * rows >= num (because all windows need to fit on the grid)
+  *)
+  on factors(num)
+    set factor to (Math's sqrt(num)) as integer
+    if factor * factor is less than num then
+      {factor + 1, factor}
+    else
+      {factor, factor}
+    end
+  end
+end
 
 set available_surface to OSX's getAvailableSurface()
 {posx, posy, dimx, dimy} of available_surface
